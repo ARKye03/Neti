@@ -1,0 +1,6 @@
+@Neti.API_HostAddress = http://localhost:5077
+
+GET {{Neti.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
