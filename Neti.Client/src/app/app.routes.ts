@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { Layout } from './components/layout/layout';
 import { FormsList } from './components/forms-list/forms-list';
 import { FormFill } from './components/form-fill/form-fill';
 import { FormEdit } from './components/form-edit/form-edit';
@@ -7,10 +8,16 @@ import { Submissions } from './components/submissions/submissions';
 import { Home } from './components/home/home';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'forms', component: FormsList },
-  { path: 'form/:id', component: FormFill },
-  { path: 'form/:id/edit', component: FormEdit },
-  { path: 'form/create', component: FormCreate },
-  { path: 'submissions', component: Submissions },
+  {
+    path: '',
+    component: Layout,
+    children: [
+      { path: '', component: Home, data: { title: undefined } }, // Home page doesn't need a title
+      { path: 'forms', component: FormsList, data: { title: 'Forms' } },
+      { path: 'form/:id', component: FormFill, data: { title: 'Fill Form' } },
+      { path: 'form/:id/edit', component: FormEdit, data: { title: 'Edit Form' } },
+      { path: 'form/create', component: FormCreate, data: { title: 'Create Form' } },
+      { path: 'submissions', component: Submissions, data: { title: 'Submissions' } },
+    ]
+  }
 ];

@@ -1,0 +1,60 @@
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 w-full bg-white dark:bg-[#1a2632] border-b border-[#f0f2f4] dark:border-[#2a3b4d]">
+    <div class="flex items-center justify-between px-6 py-3 lg:px-10">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-3 text-[#111418] dark:text-white">
+                <div
+                    class="flex items-center justify-center size-8 bg-primary/10 dark:bg-primary/20 rounded-lg text-primary">
+                    <span class="material-symbols-outlined text-[24px]">description</span>
+                </div>
+                <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">AngularForms</h2>
+            </div>
+            <div class="hidden md:flex items-center gap-6 lg:gap-9">
+                <a class="text-[#111418] dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors leading-normal"
+                    routerLink="/" routerLinkActive="text-primary">Dashboard</a>
+                <a class="text-[#111418] dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors leading-normal"
+                    href="#">Templates</a>
+                <a class="text-[#111418] dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors leading-normal"
+                    href="#">Reports</a>
+                <a class="text-[#111418] dark:text-gray-300 text-sm font-medium hover:text-primary transition-colors leading-normal"
+                    href="#">Settings</a>
+            </div>
+        </div>
+        <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+            <label class="hidden sm:flex flex-col min-w-40 h-10 max-w-64 relative group">
+                <div
+                    class="flex w-full flex-1 items-stretch rounded-lg h-full border border-transparent focus-within:border-primary/50 transition-colors">
+                    <div
+                        class="text-[#617589] dark:text-gray-400 flex border-none bg-[#f0f2f4] dark:bg-[#253341] items-center justify-center pl-3 rounded-l-lg">
+                        <span class="material-symbols-outlined text-[20px]">search</span>
+                    </div>
+                    <input
+                        class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-[#111418] dark:text-white focus:outline-0 focus:ring-0 border-none bg-[#f0f2f4] dark:bg-[#253341] h-full placeholder:text-[#617589] dark:placeholder:text-gray-500 px-3 pl-2 text-sm font-normal leading-normal transition-colors"
+                        placeholder="Search forms..." />
+                </div>
+            </label>
+            <button
+                class="relative bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-[#2a3b4d] shadow-sm hover:opacity-90 transition-opacity">
+                <img src="" alt="User Profile" /> <!-- TODO -->
+                <div
+                    class="absolute bottom-0 right-0 size-2.5 bg-green-500 border-2 border-white dark:border-[#1a2632] rounded-full">
+                </div>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Page Content -->
+<div class="flex flex-1 justify-center py-6 sm:py-10 px-4 sm:px-6 lg:px-40">
+    <div class="flex flex-col max-w-[1024px] flex-1 gap-12">
+        <!-- Router Outlet for Child Routes -->
+        <router-outlet />
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<button
+    class="fixed bottom-8 right-8 size-14 bg-primary text-white rounded-full shadow-lg hover:bg-blue-600 transition-all hover:scale-105 active:scale-95 flex items-center justify-center z-40 group">
+    <span
+        class="material-symbols-outlined text-[28px] group-hover:rotate-90 transition-transform duration-300">add</span>
+</button>
