@@ -1,1 +1,101 @@
-<p>form-create works!</p>
+<!-- Form Header -->
+<div
+    class="bg-white dark:bg-[#1a2632] rounded-xl border border-[#f0f2f4] dark:border-[#2a3b4d] shadow-sm overflow-hidden group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+    <div class="h-2 bg-primary w-full"></div>
+    <div class="p-6 md:p-8 flex flex-col gap-4">
+        <input type="text" [(ngModel)]="formTitle" placeholder="Untitled Form"
+            class="text-3xl font-bold bg-transparent border-none p-0 focus:ring-0 text-[#111418] dark:text-white placeholder:text-gray-400" />
+        <textarea [(ngModel)]="formDescription" placeholder="Form Description" rows="2"
+            class="text-base bg-transparent border-none p-0 focus:ring-0 text-[#111418] dark:text-gray-300 placeholder:text-gray-400 resize-none"></textarea>
+    </div>
+</div>
+
+<!-- Fields List -->
+<div class="flex flex-col gap-4" *ngIf="fields.length > 0">
+    <div *ngFor="let field of fields; let i = index"
+        class="bg-white dark:bg-[#1a2632] rounded-xl border border-[#f0f2f4] dark:border-[#2a3b4d] shadow-sm p-6 group hover:shadow-md transition-all relative">
+
+        <!-- Drag Handle (Visual) -->
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move bg-gray-100 dark:bg-[#2a3b4d] px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-600">
+            <span class="material-symbols-outlined text-[16px] text-gray-400">drag_handle</span>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-6 items-start">
+            <!-- Left: Input Preview / Label Config -->
+            <div class="flex-1 w-full gap-4 flex flex-col">
+                <div class="flex gap-4 items-center">
+                    <div class="p-2 bg-gray-50 dark:bg-[#253341] rounded-lg">
+                        <span class="material-symbols-outlined text-gray-500">{{ getIconForType(field.fieldType)
+                            }}</span>
+                    </div>
+                    <input type="text" [(ngModel)]="field.label" placeholder="Question Label"
+                        class="flex-1 bg-gray-50 dark:bg-[#253341] border-none rounded-lg px-4 py-2 text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 font-medium" />
+                </div>
+
+                <!-- Field Preview / Options -->
+                <div class="pl-14">
+                    <!-- Text Preview -->
+                    <input *ngIf="field.fieldType === 'text'" disabled
+                        [placeholder]="field.placeholder || 'Short answer text'"
+                        class="w-full bg-transparent border-b border-gray-200 dark:border-gray-700 py-2 text-sm text-gray-400 cursor-not-allowed select-none" />
+
+                    <!-- Radio/Select/Checkbox Options Editor -->
+                    <div *ngIf="['select', 'radio', 'checkbox'].includes(field.fieldType)" class="flex flex-col gap-2">
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Options (comma
+                            separated)</label>
+                        <input type="text" [(ngModel)]="field.options" placeholder="Option 1, Option 2, Option 3"
+                            class="w-full bg-transparent border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-[#111418] dark:text-white focus:border-primary focus:ring-0 transition-colors" />
+                        <div class="flex gap-2 flex-wrap mt-2">
+                            <span *ngFor="let opt of (field.options?.split(',') || [])"
+                                class="text-xs bg-gray-100 dark:bg-[#253341] text-gray-600 dark:text-gray-300 px-2 py-1 rounded">{{opt.trim()}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Actions & Toggles -->
+            <div
+                class="flex flex-row md:flex-col gap-4 border-t md:border-t-0 md:border-l border-gray-100 dark:border-[#2a3b4d] pt-4 md:pt-0 md:pl-6 w-full md:w-auto shrink-0 justify-between items-center md:items-end">
+                <div class="flex items-center gap-3">
+                    <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Required</label>
+                    <input type="checkbox" [(ngModel)]="field.isRequired"
+                        class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary" />
+                </div>
+
+                <button (click)="removeField(i)"
+                    class="text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 p-2 rounded-full transition-colors"
+                    title="Delete Field">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Field Section -->
+<div class="flex flex-col items-center gap-4 py-4">
+    <div *ngIf="isSelectorOpen"
+        class="w-full bg-white dark:bg-[#1a2632] rounded-xl border border-[#f0f2f4] dark:border-[#2a3b4d] shadow-lg p-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Select Field Type</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <button *ngFor="let type of fieldTypes" (click)="addField(type.type)"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#253341] border border-transparent hover:border-primary/20 text-left transition-all group">
+                <span class="material-symbols-outlined text-gray-400 group-hover:text-primary">{{type.icon}}</span>
+                <div>
+                    <div class="text-sm font-medium text-[#111418] dark:text-white">{{type.label}}</div>
+                    <div class="text-xs text-gray-500">{{type.desc}}</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <button *ngIf="!isSelectorOpen" (click)="toggleSelector()"
+        class="group flex items-center justify-center gap-2 bg-white dark:bg-[#1a2632] hover:bg-gray-50 dark:hover:bg-[#253341] border border-dashed border-gray-300 dark:border-gray-600 rounded-xl w-full py-6 text-gray-500 dark:text-gray-400 hover:text-primary transition-all">
+        <div
+            class="size-8 rounded-full bg-gray-100 dark:bg-[#253341] group-hover:bg-primary/10 flex items-center justify-center transition-colors">
+            <span class="material-symbols-outlined text-[20px] group-hover:text-primary">add</span>
+        </div>
+        <span class="font-medium">Add New Question</span>
+    </button>
+</div>
