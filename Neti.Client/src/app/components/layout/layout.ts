@@ -13,7 +13,7 @@ import { filter } from 'rxjs/operators';
 })
 export class Layout implements OnInit, OnDestroy {
   private subscription?: Subscription;
-  private baseTitle = 'AngularForms';
+  private baseTitle = 'Neti';
 
   constructor(
     private router: Router,

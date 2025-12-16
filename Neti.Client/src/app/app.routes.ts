@@ -14,9 +14,9 @@ export const routes: Routes = [
     children: [
       { path: '', component: Home, data: { title: undefined } }, // Home page doesn't need a title
       { path: 'forms', component: FormsList, data: { title: 'Forms' } },
-      { path: 'form/:id', component: FormFill, data: { title: 'Fill Form' } },
-      { path: 'form/:id/edit', component: FormEdit, data: { title: 'Edit Form' } },
-      { path: 'form/create', component: FormCreate, data: { title: 'Create Form' } },
+      { path: 'forms/:id', component: FormFill, data: { title: 'Fill Form' } },
+      { path: 'forms/:id/edit', component: FormEdit, data: { title: 'Edit Form' } },
+      { path: 'forms/create', component: FormCreate, data: { title: 'Create Form' } },
       { path: 'submissions', component: Submissions, data: { title: 'Submissions' } },
     ]
   }
