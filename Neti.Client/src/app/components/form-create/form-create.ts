@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CreateFormRequest, FormsApiService } from '../../services/forms-api';
 
 export interface FieldType {
   type: string;
@@ -27,6 +28,8 @@ export interface FormField {
   styleUrl: './form-create.css',
 })
 export class FormCreate {
+  constructor(private formsApi: FormsApiService) { }
+
   formTitle = '';
   formDescription = '';
 
@@ -91,5 +94,36 @@ export class FormCreate {
   getIconForType(type: string): string {
     const found = this.fieldTypes.find((t) => t.type === type);
     return found ? found.icon : 'short_text';
+  }
+
+  saveForm() {
+    const payload: CreateFormRequest = {
+      title: this.formTitle,
+      description: this.formDescription,
+      isActive: true,
+      fields: this.fields.map((f, index) => ({
+        label: f.label || 'Untitled Question',
+        fieldType: f.fieldType,
+        isRequired: f.isRequired,
+        placeholder: f.placeholder || undefined,
+        // if you want to store JSON in Options:
+        options: f.options
+          ? JSON.stringify(
+            f.options.split(',').map((o) => o.trim()).filter(Boolean)
+          )
+          : null,
+        order: index
+      }))
+    };
+
+    this.formsApi.createForm(payload).subscribe({
+      next: (created) => {
+        // e.g. navigate to /forms or show toast
+        console.log('Form created:', created);
+      },
+      error: (err) => {
+        console.error('Failed to create form', err);
+      },
+    });
   }
 }
