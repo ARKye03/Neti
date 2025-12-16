@@ -44,8 +44,13 @@ public class FormsController : ControllerBase
 
     // POST: api/forms
     [HttpPost]
-    public async Task<ActionResult<Form>> CreateForm(Form form)
+    public async Task<ActionResult<Form>> CreateForm([FromBody] Form form)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         _context.Forms.Add(form);
         await _context.SaveChangesAsync();
 

@@ -116,6 +116,7 @@ export class FormCreate {
       }))
     };
 
+    console.log('Payload being sent:', payload);
     this.formsApi.createForm(payload).subscribe({
       next: (created) => {
         // e.g. navigate to /forms or show toast

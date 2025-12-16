@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Neti.API.Models;
 
 public class FormField
@@ -12,6 +14,9 @@ public class FormField
     public int Order { get; set; } = 0;
 
     // Navigation property
-    public Form Form { get; set; } = null!;
+    [JsonIgnore]
+    public Form? Form { get; set; }
+
+    [JsonIgnore]
     public ICollection<SubmissionValue> SubmissionValues { get; set; } = new List<SubmissionValue>();
 }
