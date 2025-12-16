@@ -3,7 +3,7 @@ run:
 	dotnet run --project Neti.API/Neti.API.csproj
 
 run-client:
-	cd Neti.Client && ng serve
+    cd Neti.Client && ng serve
 
 run-api:
-	dotnet run --project Neti.API/Neti.API.csproj
+    dotnet run --project Neti.API/Neti.API.csproj
