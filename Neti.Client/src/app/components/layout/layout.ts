@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, Router, ActivatedRoute, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { CreateFormRequest, FormsApiService } from '../../services/forms-api';
 
@@ -23,12 +23,12 @@ export interface FormField {
 @Component({
   selector: 'app-form-create',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './form-create.html',
   styleUrl: './form-create.css',
 })
 export class FormCreate {
-  constructor(private formsApi: FormsApiService) { }
+  constructor(private formsApi: FormsApiService) {}
 
   formTitle = '';
   formDescription = '';
@@ -109,11 +109,14 @@ export class FormCreate {
         // if you want to store JSON in Options:
         options: f.options
           ? JSON.stringify(
-            f.options.split(',').map((o) => o.trim()).filter(Boolean)
-          )
+              f.options
+                .split(',')
+                .map((o) => o.trim())
+                .filter(Boolean)
+            )
           : null,
-        order: index
-      }))
+        order: index,
+      })),
     };
 
     this.formsApi.createForm(payload).subscribe({
