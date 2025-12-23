@@ -5,11 +5,11 @@ namespace Neti.API.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public DbSet<Form> Forms { get; set; }
-    public DbSet<FormField> FormFields { get; set; }
-    public DbSet<FormSubmission> FormSubmissions { get; set; }
-    public DbSet<SubmissionValue> SubmissionValues { get; set; }
-    public DbSet<User> Users { get; set; }
+    public DbSet<Form> Forms { get; set; } = null!;
+    public DbSet<FormField> FormFields { get; set; } = null!;
+    public DbSet<FormSubmission> FormSubmissions { get; set; } = null!;
+    public DbSet<SubmissionValue> SubmissionValues { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
