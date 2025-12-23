@@ -18,14 +18,18 @@ export class FormFill implements OnInit {
   private formsService = inject(FormsApiService);
   private fb = inject(FormBuilder);
 
-  form$!: Observable<Form>; // Using ! because it's initialized in ngOnInit
+  isSubmitting = false;
+  submitted = false;
+  error: string | null = null;
+  formId: number = 0;
+  form$!: Observable<Form>;
   dynamicForm: FormGroup = this.fb.group({});
 
   ngOnInit() {
     this.form$ = this.route.paramMap.pipe(
       switchMap((params) => {
-        const id = Number(params.get('id'));
-        return this.formsService.getForm(id);
+        this.formId = Number(params.get('id'));
+        return this.formsService.getForm(this.formId);
       }),
       tap((form) => this.buildForm(form.fields))
     );
@@ -58,8 +62,29 @@ export class FormFill implements OnInit {
 
   onSubmit() {
     if (this.dynamicForm.valid) {
-      console.log('Form Submitted', this.dynamicForm.value);
-      // TODO: Implement submission logic
+      this.isSubmitting = true;
+      this.error = null;
+
+      const rawValues = this.dynamicForm.value;
+      const submission = {
+        formId: this.formId,
+        values: Object.keys(rawValues).map((key) => ({
+          formFieldId: Number(key),
+          value: String(rawValues[key]),
+        })),
+      };
+
+      this.formsService.submitForm(submission).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.submitted = true;
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.error = 'Failed to submit form. Please try again.';
+          console.error(err);
+        },
+      });
     } else {
       this.dynamicForm.markAllAsTouched();
     }

@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Neti.API.Data;
-using Neti.API.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,29 @@ var serverVersion = new MariaDbServerVersion(new Version(12, 1, 2));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,56 +49,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
-
-app.MapGet("/db-test", async (ApplicationDbContext db) =>
-{
-    var forms = await db.Forms
-        .Include(f => f.Fields.OrderBy(field => field.Order))
-        .ToListAsync();
-
-    return Results.Ok(forms);
-});
-
-app.MapPost("/seed-form", async (ApplicationDbContext db) =>
-{
-    // Optional: avoid duplicating the seed
-    if (await db.Forms.AnyAsync())
-    {
-        return Results.BadRequest(new { Message = "Forms table already has data." });
-    }
-
-    var form = new Form
-    {
-        Title = "Employee Feedback",
-        Description = "Basic feedback form seeded from API.",
-        IsActive = true,
-        Fields =
-        [
-            new FormField
-            {
-                Label = "Your Name",
-                FieldType = "text",
-                IsRequired = true,
-                Placeholder = "John Doe",
-                Order = 0
-            },
-            new FormField
-            {
-                Label = "Overall Satisfaction",
-                FieldType = "radio",
-                IsRequired = true,
-                // store options however you decided (here: JSON string)
-                Options = "[\"Very satisfied\",\"Satisfied\",\"Neutral\",\"Dissatisfied\"]",
-                Order = 1
-            }
-        ]
-    };
-
-    db.Forms.Add(form);
-    await db.SaveChangesAsync();
-
-    return Results.Ok(form);
-});
 
 app.Run();

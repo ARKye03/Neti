@@ -4,7 +4,25 @@
     <h1 class="text-3xl font-bold mb-2 dark:text-gray-100">{{ form.title }}</h1>
     <p class="text-gray-600 dark:text-gray-300 mb-6">{{ form.description }}</p>
 
+    @if (submitted) {
+    <div class="flex flex-col items-center justify-center py-10 gap-4 text-center">
+      <div class="size-16 rounded-full bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[32px]">check_circle</span>
+      </div>
+      <h2 class="text-2xl font-bold dark:text-white">Submission Received!</h2>
+      <p class="text-gray-600 dark:text-gray-400">Thank you for filling out the form. Your response has been recorded.</p>
+      <button (click)="submitted = false; dynamicForm.reset()" class="text-primary font-bold hover:underline">
+        Fill out another response
+      </button>
+    </div>
+    } @else {
     <form [formGroup]="dynamicForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      @if (error) {
+      <div class="p-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium">
+        {{ error }}
+      </div>
+      }
+
       @for (field of form.fields; track field) {
 
       <div class="flex flex-col">
@@ -76,21 +94,19 @@
           </ng-container>
           } @else {
 
-          <ng-template>
-            <div class="flex items-center">
-              <input
-                type="checkbox"
-                [id]="'field-' + field.id"
-                [formControlName]="field.id.toString()"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                [for]="'field-' + field.id"
-                class="text-sm text-gray-700 dark:text-gray-200 cursor-pointer"
-                >{{ field.label }}</label
-              >
-            </div>
-          </ng-template>
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              [id]="'field-' + field.id"
+              [formControlName]="field.id.toString()"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label
+              [for]="'field-' + field.id"
+              class="text-sm text-gray-700 dark:text-gray-200 cursor-pointer"
+              >{{ field.label }}</label
+            >
+          </div>
           }
         </div>
         } @if ( dynamicForm.get(field.id.toString())?.invalid &&
@@ -109,12 +125,18 @@
 
       <button
         type="submit"
-        [disabled]="dynamicForm.invalid"
-        class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 mt-6 shadow-md transition-colors dark:hover:bg-blue-500"
+        [disabled]="dynamicForm.invalid || isSubmitting"
+        class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 mt-6 shadow-md transition-colors dark:hover:bg-blue-500 flex items-center justify-center gap-2"
       >
+        @if (isSubmitting) {
+        <span class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        Submitting...
+        } @else {
         Submit Form
+        }
       </button>
     </form>
+    }
   </div>
 </div>
 } @if (!(form$ | async)) {

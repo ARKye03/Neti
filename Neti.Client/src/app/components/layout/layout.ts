@@ -1,9 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet, Router, ActivatedRoute, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
+import {
+  RouterOutlet,
+  Router,
+  ActivatedRoute,
+  RouterLink,
+  RouterLinkActive,
+  NavigationEnd,
+} from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-layout',
@@ -12,6 +21,7 @@ import { filter } from 'rxjs/operators';
   styleUrl: './layout.css',
 })
 export class Layout implements OnInit, OnDestroy {
+  public authService = inject(AuthService);
   private subscription?: Subscription;
   private baseTitle = 'Neti';
 
@@ -27,7 +37,7 @@ export class Layout implements OnInit, OnDestroy {
 
     // Listen to route changes
     this.subscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
         this.updateTitle();
       });
@@ -38,7 +48,7 @@ export class Layout implements OnInit, OnDestroy {
     while (route.firstChild) {
       route = route.firstChild;
     }
-    route.data.subscribe(data => {
+    route.data.subscribe((data) => {
       const title = data['title'];
       if (title) {
         this.titleService.setTitle(`${title} - ${this.baseTitle}`);

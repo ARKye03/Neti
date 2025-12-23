@@ -3,17 +3,13 @@ using Neti.API.Models;
 
 namespace Neti.API.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
-
     public DbSet<Form> Forms { get; set; }
     public DbSet<FormField> FormFields { get; set; }
     public DbSet<FormSubmission> FormSubmissions { get; set; }
     public DbSet<SubmissionValue> SubmissionValues { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +31,21 @@ public class ApplicationDbContext : DbContext
                 .WithOne(e => e.Form)
                 .HasForeignKey(e => e.FormId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.Forms)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // User configuration
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PasswordHash).IsRequired();
+            entity.HasIndex(e => e.Email).IsUnique();
         });
 
         // FormField configuration

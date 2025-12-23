@@ -39,16 +39,37 @@ export interface CreateFormRequest {
   }[];
 }
 
+export interface FormSubmission {
+  formId: number;
+  values: {
+    formFieldId: number;
+    value: string;
+  }[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class FormsApiService {
   private http = inject(HttpClient);
-  private baseUrl = '/api/forms'; // goes via proxy to http://localhost:5077/api/forms
+  private formsUrl = '/api/forms';
+  private submissionsUrl = '/api/submissions';
 
   createForm(payload: CreateFormRequest): Observable<Form> {
-    return this.http.post<Form>(this.baseUrl, payload);
+    return this.http.post<Form>(this.formsUrl, payload);
+  }
+
+  getForms(): Observable<Form[]> {
+    return this.http.get<Form[]>(this.formsUrl);
   }
 
   getForm(id: number): Observable<Form> {
-    return this.http.get<Form>(`${this.baseUrl}/${id}`);
+    return this.http.get<Form>(`${this.formsUrl}/${id}`);
+  }
+
+  submitForm(payload: FormSubmission): Observable<any> {
+    return this.http.post(this.submissionsUrl, payload);
+  }
+
+  getSubmissions(formId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.submissionsUrl}/form/${formId}`);
   }
 }

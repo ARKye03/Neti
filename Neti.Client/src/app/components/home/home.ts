@@ -1,14 +1,40 @@
-import { Component } from '@angular/core';
-
+import { Component, inject, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { FormsApiService, Form } from '../../services/forms-api';
+import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [RouterLink, DatePipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-  // Recent activity data
+export class Home implements OnInit {
+  public authService = inject(AuthService);
+  private formsApi = inject(FormsApiService);
+
+  userForms: Form[] = [];
+  isLoading = false;
+
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.loadForms();
+    }
+  }
+
+  loadForms() {
+    this.isLoading = true;
+    this.formsApi.getForms().subscribe({
+      next: (forms) => {
+        this.userForms = forms.slice(0, 5); // Only show top 5 for "Recent"
+        this.isLoading = false;
+      },
+      error: () => (this.isLoading = false),
+    });
+  }
+
+  // Fallback Recent activity data if not logged in or no forms
   recentActivity = [
     {
       id: 'FORM-2049',
@@ -19,7 +45,7 @@ export class Home {
       lastEdited: '2 hours ago',
       status: 'Draft',
       statusClass: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-      actionIcon: 'edit'
+      actionIcon: 'edit',
     },
     {
       id: 'FORM-1982',
@@ -30,7 +56,7 @@ export class Home {
       lastEdited: 'Yesterday',
       status: 'Submitted',
       statusClass: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-      actionIcon: 'visibility'
+      actionIcon: 'visibility',
     },
     {
       id: 'FORM-1855',
@@ -41,8 +67,8 @@ export class Home {
       lastEdited: '3 days ago',
       status: 'In Review',
       statusClass: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-      actionIcon: 'history'
-    }
+      actionIcon: 'history',
+    },
   ];
 
   // Template cards data
@@ -52,28 +78,28 @@ export class Home {
       description: 'Standard EOM reporting structure for departments.',
       icon: 'description',
       iconBg: 'bg-blue-50 dark:bg-blue-900/30',
-      iconColor: 'text-primary'
+      iconColor: 'text-primary',
     },
     {
       title: 'Expense Claim',
       description: 'Reimburse employee travel and hardware expenses.',
       icon: 'payments',
       iconBg: 'bg-green-50 dark:bg-green-900/30',
-      iconColor: 'text-green-600 dark:text-green-400'
+      iconColor: 'text-green-600 dark:text-green-400',
     },
     {
       title: 'Feedback Survey',
       description: 'Collect anonymous user feedback post-launch.',
       icon: 'forum',
       iconBg: 'bg-purple-50 dark:bg-purple-900/30',
-      iconColor: 'text-purple-600 dark:text-purple-400'
+      iconColor: 'text-purple-600 dark:text-purple-400',
     },
     {
       title: 'IT Request',
       description: 'Hardware replacement or software access help.',
       icon: 'desktop_windows',
       iconBg: 'bg-orange-50 dark:bg-orange-900/30',
-      iconColor: 'text-orange-600 dark:text-orange-400'
-    }
+      iconColor: 'text-orange-600 dark:text-orange-400',
+    },
   ];
 }

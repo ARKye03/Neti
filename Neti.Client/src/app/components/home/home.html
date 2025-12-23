@@ -11,25 +11,33 @@
                     </span>
                     <h1
                         class="text-[#111418] dark:text-white text-4xl sm:text-5xl font-extrabold leading-[1.15] tracking-tight">
+                        @if (authService.currentUser(); as user) {
+                        Welcome back, {{ user.username }}
+                        } @else {
                         Streamline Your Data Collection
+                        }
                     </h1>
                     <p class="text-[#617589] dark:text-gray-400 text-lg font-normal leading-relaxed max-w-[500px]">
-                        Effortlessly create, manage, and analyze forms. Select a template below or start from
-                        scratch to power
-                        your workflows.
+                        @if (authService.currentUser()) {
+                        Quickly manage your existing forms or start a new project to continue collecting valuable
+                        insights.
+                        } @else {
+                        Effortlessly create, manage, and analyze forms. Select a template below or start from scratch to
+                        power your workflows.
+                        }
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-3 w-full">
-                    <button
+                    <a routerLink="/forms/create"
                         class="flex items-center justify-center gap-2 rounded-lg h-12 px-6 bg-primary hover:bg-blue-600 dark:hover:bg-blue-500 text-white text-base font-bold leading-normal transition-all shadow-md shadow-primary/20 active:scale-95">
                         <span class="material-symbols-outlined text-[20px]">add</span>
                         <span class="truncate">Create New Form</span>
-                    </button>
-                    <button
+                    </a>
+                    <a routerLink="/forms"
                         class="flex items-center justify-center gap-2 rounded-lg h-12 px-6 bg-white dark:bg-[#253341] border border-[#dbe0e6] dark:border-[#3a4b5c] text-[#111418] dark:text-white hover:bg-gray-50 dark:hover:bg-[#2f4050] text-base font-bold leading-normal transition-all active:scale-95">
                         <span class="material-symbols-outlined text-[20px]">dashboard</span>
-                        <span class="truncate">View Dashboard</span>
-                    </button>
+                        <span class="truncate">View All Forms</span>
+                    </a>
                 </div>
             </div>
             <div class="w-full @[864px]:w-1/2 flex justify-center @[864px]:justify-end">
@@ -114,6 +122,38 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#dbe0e6] dark:divide-[#2a3b4d]">
+                        @if (userForms.length > 0) {
+                        @for (form of userForms; track form.id) {
+                        <tr class="group hover:bg-gray-50 dark:hover:bg-[#253341] transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 rounded bg-blue-100 dark:bg-blue-900/40 text-primary">
+                                        <span class="material-symbols-outlined text-[20px]">description</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[#111418] dark:text-white font-bold text-sm">{{ form.title }}</p>
+                                        <p class="text-[#617589] dark:text-gray-500 text-xs">ID: #{{ form.id }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-[#617589] dark:text-gray-400">
+                                {{ form.createdAt | date:'mediumDate' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    {{ form.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <a [routerLink]="['/forms', form.id, 'edit']"
+                                    class="text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-white">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                </a>
+                            </td>
+                        </tr>
+                        }
+                        } @else {
                         @for (activity of recentActivity; track activity.id) {
                         <tr class="group hover:bg-gray-50 dark:hover:bg-[#253341] transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -147,6 +187,7 @@
                                 </button>
                             </td>
                         </tr>
+                        }
                         }
                     </tbody>
                 </table>

@@ -33,13 +33,24 @@
                         placeholder="Search forms..." />
                 </div>
             </label>
-            <button
-                class="relative bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-[#2a3b4d] shadow-sm hover:opacity-90 transition-opacity">
-                <img class="rounded-lg" src="emptyAvatar.webp" alt="User Profile" /> <!-- TODO -->
+
+            @if (authService.currentUser(); as user) {
+            <a routerLink="/profile"
+                class="relative bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white dark:border-[#2a3b4d] shadow-sm hover:opacity-90 transition-opacity overflow-hidden">
+                <img class="w-full h-full object-cover" src="emptyAvatar.webp" [alt]="user.username" />
                 <div
-                    class="absolute bottom-0 right-0 size-3.5 bg-green-500 border-2 border-white dark:border-[#1a2632] rounded-full">
+                    class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white dark:border-[#1a2632] rounded-full">
                 </div>
-            </button>
+            </a>
+            } @else {
+            <div class="flex items-center gap-2">
+                <a routerLink="/login"
+                    class="text-sm font-bold text-[#111418] dark:text-white hover:text-primary transition-colors">Login</a>
+                <a routerLink="/register"
+                    class="bg-primary hover:bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-lg transition-all shadow-md shadow-primary/20">Sign
+                    Up</a>
+            </div>
+            }
         </div>
     </div>
 </header>
